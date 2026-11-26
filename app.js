@@ -4,22 +4,23 @@ class Calculator {
         this.currentOperandTextElement = currentOperandTextElement
         this.clear()
     }
+
     clear() {
-        if (this.currentOperand === '') return
-        if (this.previousOperand != '') {
-            this.compute()
-        }
         this.currentOperand = ''
         this.previousOperand = ''
         this.operation = undefined
     }
+
     delete() {
         this.currentOperand = this.currentOperand.toString().slice(0, -1)
     }
+
     appendNumber(number) {
-        if (number == '.' && this.currentOperand.toString.includes('.')) return
-        this.currentOperand = this.currentOperand.toString() + number.toString()
+        const currentStr = this.currentOperand.toString()
+        if (number === '.' && currentStr.includes('.')) return
+        this.currentOperand = currentStr + number.toString()
     }
+
     chooseOperation(operation) {
         if (this.currentOperand === '') return
         if (this.previousOperand !== '') {
@@ -29,11 +30,13 @@ class Calculator {
         this.previousOperand = this.currentOperand
         this.currentOperand = ''
     }
+
     compute() {
-        let computation;
+        let computation
         const prev = parseFloat(this.previousOperand)
         const current = parseFloat(this.currentOperand)
         if (isNaN(prev) || isNaN(current)) return
+
         switch (this.operation) {
             case '÷':
                 computation = prev / current
@@ -50,39 +53,42 @@ class Calculator {
             default:
                 return
         }
+
         this.currentOperand = computation
         this.previousOperand = ''
         this.operation = undefined
     }
+
     getDisplayNumber(number) {
         const stringNumber = number.toString()
         const integerDigits = parseFloat(stringNumber.split('.')[0])
         const decimalDigits = stringNumber.split('.')[1]
-        let intDisplay;
-        if (isNaN(integerDigits)){
+
+        let intDisplay
+        if (isNaN(integerDigits)) {
             intDisplay = ''
         } else {
-            intDisplay = integerDigits.toLocaleString('en', {maximumFractionDigits:0})
+            intDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 })
         }
-        if (decimalDigits != Null){
-            return `$(intDisplay).$(decimalDigits)`
-        }else{
-            return intDisplay
+
+        if (decimalDigits != null) {
+            return `${intDisplay}.${decimalDigits}`
         }
+        return intDisplay
     }
+
     updateDisplay() {
         this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand)
-        this.previousOperandTextElement.innerText = this.previousOperand
 
         if (this.operation != null) {
             this.previousOperandTextElement.innerText =
-                `${this.getDisplayNumber(previousOperand)} ${this.operation}`
+                `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`
         } else {
             this.previousOperandTextElement.innerText = ''
         }
-
     }
 }
+
 const numberButtons = document.querySelectorAll('[data-number]')
 const operationButtons = document.querySelectorAll('[data-operation]')
 const equalsButton = document.querySelector('[data-equals]')
@@ -107,24 +113,24 @@ operationButtons.forEach(button => {
     })
 })
 
-equalsButton.addEventListener('click', button => {
+equalsButton.addEventListener('click', () => {
     calculator.compute()
     calculator.updateDisplay()
 })
 
-allClearButton.addEventListener('click', button => {
+allClearButton.addEventListener('click', () => {
     calculator.clear()
     calculator.updateDisplay()
 })
 
-deleteButton.addEventListener('click', button => {
+deleteButton.addEventListener('click', () => {
     calculator.delete()
     calculator.updateDisplay()
 })
 
-
-const themeToggleButton = document.querySelector('[data-theme-toggle]')
-const themeIcon = document.querySelector('[data-theme-icon]')
+// Use whichever selectors match your HTML: [data-theme-toggle] or #theme-toggle
+const themeToggleButton = document.querySelector('[data-theme-toggle]') || document.getElementById('theme-toggle')
+const themeIcon = document.querySelector('[data-theme-icon]') || document.getElementById('theme-icon')
 
 const sunSVG = `
   <svg width="20px" height="20px" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -141,22 +147,24 @@ const moonSVG = `<svg width="20px" height="20px" viewBox="0 0 15 15" fill="none"
     <path d="M7.7066 0.00274765C7.50391 -0.0027381 7.31797 0.114737 7.23588 0.300147C7.15379 0.485558 7.19181 0.702186 7.33213 0.848565C8.36577 1.92686 9.00015 3.3888 9.00015 4.99996C9.00015 8.31366 6.31385 11 3.00015 11C2.5757 11 2.16207 10.956 1.76339 10.8725C1.56489 10.8309 1.36094 10.9133 1.2471 11.0812C1.13325 11.249 1.13207 11.469 1.2441 11.638C2.58602 13.663 4.88682 15 7.50012 15C11.6423 15 15.0001 11.6421 15.0001 7.49996C15.0001 3.42688 11.7534 0.112271 7.7066 0.00274765Z" fill="currentColor"/>
   </svg>
 `
-const themeIcon = document.getElementById('theme-icon');
-const themeToggleButton = document.getElementById('theme-toggle');
 
 function updateThemeIcon() {
-  const isDark = document.body.classList.contains('dark-mode');
-  themeIcon.innerHTML = isDark ? sunSVG : moonSVG;
+  const isDark = document.body.classList.contains('dark-mode')
+  if (themeIcon) {
+    themeIcon.innerHTML = isDark ? sunSVG : moonSVG
+  }
 }
 
 if (localStorage.getItem('calculator-theme') === 'dark') {
-  document.body.classList.add('dark-mode');
+  document.body.classList.add('dark-mode')
 }
 
-updateThemeIcon();
+updateThemeIcon()
 
-themeToggleButton.addEventListener('click', () => {
-  const isDark = document.body.classList.toggle('dark-mode');
-  localStorage.setItem('calculator-theme', isDark ? 'dark' : 'light');
-  updateThemeIcon();
-});
+if (themeToggleButton) {
+  themeToggleButton.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark-mode')
+    localStorage.setItem('calculator-theme', isDark ? 'dark' : 'light')
+    updateThemeIcon()
+  })
+}
