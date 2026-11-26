@@ -97,7 +97,7 @@ body {
 }
 
 .previous-operand {
-    color: var(--prev-text);
+    color: white;
     font-size: 1.5rem;
 
 }
