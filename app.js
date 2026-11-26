@@ -54,18 +54,32 @@ class Calculator {
         this.previousOperand = ''
         this.operation = undefined
     }
-    getDisplayNumber(number){
-        const floatNumber = parseFloat(number)
-        if (isNaN(floatNumber)) return ''
-        return floatNumber.toLocalString('en')
+    getDisplayNumber(number) {
+        const stringNumber = number.toString()
+        const integerDigits = parseFloat(stringNumber.split('.')[0])
+        const decimalDigits = stringNumber.split('.')[1]
+        let intDisplay;
+        if (isNaN(integerDigits)){
+            intDisplay = ''
+        } else {
+            intDisplay = integerDigits.toLocaleString('en', {maximumFractionDigits:0})
+        }
+        if (decimalDigits != Null){
+            return `$(intDisplay).$(decimalDigits)`
+        }else{
+            return intDisplay
+        }
     }
     updateDisplay() {
         this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand)
-        if (this.operation != null){
-            this.previousOperandTextElement.innerText = 
-            `${this.getDisplayNumber(previousOperand)} ${this.operation}`
-        }
         this.previousOperandTextElement.innerText = this.previousOperand
+
+        if (this.operation != null) {
+            this.previousOperandTextElement.innerText =
+                `${this.getDisplayNumber(previousOperand)} ${this.operation}`
+        } else {
+            this.previousOperandTextElement.innerText = ''
+        }
 
     }
 }
